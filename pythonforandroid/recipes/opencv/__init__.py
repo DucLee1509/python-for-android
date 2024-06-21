@@ -6,6 +6,7 @@ import sh
 from pythonforandroid.logger import shprint
 from pythonforandroid.recipe import NDKRecipe
 from pythonforandroid.util import current_directory, ensure_dir
+from pythonforandroid.toolchain import Recipe
 
 
 class OpenCVRecipe(NDKRecipe):
@@ -44,6 +45,9 @@ class OpenCVRecipe(NDKRecipe):
         env = super().get_recipe_env(arch)
         env['ANDROID_NDK'] = self.ctx.ndk_dir
         env['ANDROID_SDK'] = self.ctx.sdk_dir
+        build_dir = Recipe.get_recipe('ffmpeg', self.ctx).get_build_dir(arch.arch)
+        env["FFMPEG_INCLUDE_DIR"] = join(build_dir, "include")
+        env["FFMPEG_LIB_DIR"] = join(build_dir, "lib")
         return env
 
     def build_arch(self, arch):
@@ -75,6 +79,8 @@ class OpenCVRecipe(NDKRecipe):
             shprint(sh.cmake,
                     '-DP4A=ON',
                     '-DWITH_FFMPEG=ON',
+                    '-DFFMPEG_INCLUDE_DIR={}'.format(env["FFMPEG_INCLUDE_DIR"]),
+                    '-DFFMPEG_LIB_DIR={}'.format(env["FFMPEG_LIB_DIR"]),
                     '-DANDROID_ABI={}'.format(arch.arch),
                     '-DANDROID_STANDALONE_TOOLCHAIN={}'.format(self.ctx.ndk_dir),
                     '-DANDROID_NATIVE_API_LEVEL={}'.format(self.ctx.ndk_api),
