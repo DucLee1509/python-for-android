@@ -15,6 +15,8 @@ class FFPyPlayerRecipe(CythonRecipe):
         build_dir = Recipe.get_recipe('ffmpeg', self.ctx).get_build_dir(arch.arch)
         env["FFMPEG_INCLUDE_DIR"] = join(build_dir, "include")
         env["FFMPEG_LIB_DIR"] = join(build_dir, "lib")
+        print("FFMPEG_INCLUDE_DIR: ", env["FFMPEG_INCLUDE_DIR"])
+        print("FFMPEG_LIB_DIR: ", env["FFMPEG_LIB_DIR"])
 
         env["SDL_INCLUDE_DIR"] = join(self.ctx.bootstrap.build_dir, 'jni', 'SDL', 'include')
         env["SDL_LIB_DIR"] = join(self.ctx.bootstrap.build_dir, 'libs', arch.arch)
